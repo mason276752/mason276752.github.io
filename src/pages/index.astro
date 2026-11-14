@@ -1,0 +1,99 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolCard from '../components/ToolCard.astro';
+
+const tools = (await getCollection('tools')).sort((a, b) => a.data.order - b.data.order);
+const byId = Object.fromEntries(tools.map((t) => [t.id, t]));
+
+// The tools share this origin, so tabs can pass files to each other over BroadcastChannel.
+const links = [
+  { from: 'zipeditor', to: 'ziptotaiwanzip', what: '按「簡繁轉換」把整個 ZIP 送過去，轉好自動傳回並套用' },
+  { from: 'zipeditor', to: 'paste2jpg', what: '勾選圖片送過去，轉成 JPG 或 WebP' },
+  { from: 'paste2jpg', to: 'zipeditor', what: '把轉好的圖片打包傳過去，開成新 ZIP 或合併進目前資料夾' },
+].filter((l) => byId[l.from] && byId[l.to]);
+---
+
+<BaseLayout
+  title="mason276752 的線上小工具｜圖片轉檔、ZIP 編輯、簡繁轉換"
+  description="幾個純前端的線上工具：圖片貼上轉 JPG／WebP、在瀏覽器裡編輯 ZIP、ZIP 與 EPUB 整包簡繁轉換。檔案只在你的瀏覽器裡處理，不會上傳。"
+>
+  <section class="wrap hero">
+    <h1>瀏覽器裡的小工具</h1>
+    <p>
+      幾個純前端的線上工具：檔案只在你自己的瀏覽器裡處理，不會上傳到任何伺服器。
+      免安裝、免註冊，手機也能用。
+    </p>
+  </section>
+
+  <section class="wrap" aria-labelledby="tools-heading">
+    <h2 id="tools-heading" class="section-title">工具</h2>
+    <div class="grid">
+      {tools.map((tool) => <ToolCard tool={tool} />)}
+    </div>
+  </section>
+
+  {links.length > 0 && (
+    <section class="wrap" aria-labelledby="links-heading">
+      <h2 id="links-heading" class="section-title">互相串接</h2>
+      <p class="lead">
+        工具都放在 mason276752.github.io 底下，同一個瀏覽器裡的分頁可以直接互傳檔案；對方沒開的話會自動開新分頁。
+      </p>
+      <ul class="links panel">
+        {links.map((l) => (
+          <li>
+            <span class="route">
+              <a href={byId[l.from].data.url}>{byId[l.from].data.name}</a>
+              <span class="arrow" aria-label="傳到">→</span>
+              <a href={byId[l.to].data.url}>{byId[l.to].data.name}</a>
+            </span>
+            <span class="what">{l.what}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .hero { margin-bottom: 40px; }
+  .hero h1 {
+    margin: 0 0 12px;
+    font-size: clamp(28px, 5vw, 40px);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .hero p { margin: 0; max-width: 36em; color: var(--muted); font-size: 17px; }
+
+  .section-title {
+    margin: 0 0 16px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+  section + section { margin-top: 48px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 16px;
+  }
+
+  .lead { margin: -4px 0 16px; max-width: 40em; color: var(--muted); font-size: 15px; }
+
+  .links { margin: 0; padding: 0; list-style: none; }
+  .links li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 16px;
+    padding: 14px 20px;
+  }
+  .links li + li { border-top: 1px solid var(--line); }
+  .route { flex: none; min-width: 15em; font-weight: 600; font-size: 15px; }
+  .route a { color: var(--text); text-decoration: none; }
+  .route a:hover { color: var(--accent); }
+  .arrow { margin: 0 6px; color: var(--muted); font-weight: 400; }
+  .what { color: var(--muted); font-size: 14px; }
+</style>

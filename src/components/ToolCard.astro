@@ -1,0 +1,67 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+
+interface Props {
+  tool: CollectionEntry<'tools'>;
+}
+
+const { tool } = Astro.props;
+const { name, tagline, url, repo, icon, features } = tool.data;
+const { Content } = await render(tool);
+---
+
+<article class="card panel">
+  <header>
+    <img src={icon} alt="" width="44" height="44" />
+    <div>
+      <h3><a href={url}>{name}</a></h3>
+      <p class="tagline">{tagline}</p>
+    </div>
+  </header>
+
+  <div class="body"><Content /></div>
+
+  {features.length > 0 && (
+    <ul>
+      {features.map((f) => <li>{f}</li>)}
+    </ul>
+  )}
+
+  <footer>
+    <a class="btn primary" href={url}>開啟工具 →</a>
+    <a class="btn" href={repo}>原始碼</a>
+  </footer>
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 22px;
+  }
+  header { display: flex; align-items: center; gap: 14px; }
+  header img { flex: none; border-radius: 10px; }
+  h3 { margin: 0; font-size: 18px; line-height: 1.3; }
+  h3 a { color: var(--text); text-decoration: none; }
+  h3 a:hover { color: var(--accent); }
+  .tagline { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+
+  .body :global(p) { margin: 0; }
+
+  ul {
+    margin: 0;
+    padding: 0 0 0 1.2em;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  li + li { margin-top: 2px; }
+
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 4px;
+  }
+</style>
