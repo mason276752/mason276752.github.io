@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostList from '../../../components/PostList.astro';
+import { getPosts, type Post } from '../../../lib/blog';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
+  return tags.map((tag) => ({
+    params: { tag },
+    props: { tag, posts: posts.filter((p) => p.data.tags.includes(tag)) },
+  }));
+}
+
+interface Props {
+  tag: string;
+  posts: Post[];
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`#${tag} 的文章 – mason276752`} description={`標籤「${tag}」的 ${posts.length} 篇文章。`}>
+  <section class="wrap narrow">
+    <a class="back" href="/blog/">← 所有文章</a>
+    <h1>#{tag}</h1>
+    <PostList posts={posts} />
+  </section>
+</BaseLayout>
+
+<style>
+  .narrow { max-width: 800px; }
+  .back { color: var(--muted); font-size: 14px; text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  h1 { margin: 4px 0 16px; font-size: clamp(26px, 5vw, 32px); line-height: 1.2; }
+</style>

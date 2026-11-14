@@ -4,10 +4,17 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description: string;
+  type?: 'website' | 'article';
 }
 
-const { title, description } = Astro.props;
+const { title, description, type = 'website' } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+
+const path = Astro.url.pathname;
+const nav = [
+  { href: '/', label: '工具', current: path === '/' },
+  { href: '/blog/', label: '文章', current: path.startsWith('/blog/') },
+];
 ---
 
 <!doctype html>
@@ -21,11 +28,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#f5f6f8" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#111317" media="(prefers-color-scheme: dark)" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={type} />
     <meta property="og:locale" content="zh_TW" />
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <link rel="alternate" type="application/rss+xml" title="mason276752 的文章" href="/blog/rss.xml" />
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>
@@ -35,7 +43,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
           <img src="/favicon.svg" alt="" width="24" height="24" />
           <span>mason276752</span>
         </a>
-        <a class="gh" href="https://github.com/mason276752">GitHub</a>
+        <nav>
+          {nav.map((n) => <a href={n.href} aria-current={n.current ? 'page' : undefined}>{n.label}</a>)}
+          <a href="https://github.com/mason276752">GitHub</a>
+        </nav>
       </div>
     </header>
 
@@ -70,8 +81,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     font-weight: 600;
     text-decoration: none;
   }
-  .gh { color: var(--muted); font-size: 14px; text-decoration: none; }
-  .gh:hover { color: var(--text); }
+  nav { display: flex; gap: 20px; }
+  nav a { color: var(--muted); font-size: 14px; text-decoration: none; }
+  nav a:hover, nav a[aria-current] { color: var(--text); }
 
   main { padding: 48px 0 64px; }
 

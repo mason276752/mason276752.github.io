@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ToolCard from '../components/ToolCard.astro';
+import PostList from '../components/PostList.astro';
+import { getPosts } from '../lib/blog';
 
 const tools = (await getCollection('tools')).sort((a, b) => a.data.order - b.data.order);
 const byId = Object.fromEntries(tools.map((t) => [t.id, t]));
@@ -15,6 +17,8 @@ const links = [
   { from: 'zipeditor', to: 'removebg', both: true, what: '勾選圖片送過去去背、修補，完成後打包傳回來' },
   { from: 'zipeditor', to: 'audiospeed', both: true, what: '勾選音檔送過去變速或剪輯，完成後打包傳回來' },
 ].filter((l) => byId[l.from] && byId[l.to]);
+
+const posts = (await getPosts()).slice(0, 3);
 ---
 
 <BaseLayout
@@ -54,6 +58,14 @@ const links = [
           </li>
         ))}
       </ul>
+    </section>
+  )}
+
+  {posts.length > 0 && (
+    <section class="wrap" aria-labelledby="posts-heading">
+      <h2 id="posts-heading" class="section-title">最新文章</h2>
+      <PostList posts={posts} />
+      <p class="more"><a href="/blog/">所有文章 →</a></p>
     </section>
   )}
 </BaseLayout>
@@ -99,4 +111,7 @@ const links = [
   .route a:hover { color: var(--accent); }
   .arrow { margin: 0 6px; color: var(--muted); font-weight: 400; }
   .what { color: var(--muted); font-size: 14px; }
+
+  .more { margin: 12px 0 0; font-size: 14px; }
+  .more a { text-decoration: none; }
 </style>

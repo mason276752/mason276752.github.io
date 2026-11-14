@@ -1,0 +1,59 @@
+# Online editor at /admin/ (Sveltia CMS): https://sveltiacms.app/en/docs
+# Saving commits straight to main, which redeploys the site.
+# Keep the fields in sync with the `blog` collection in src/content.config.ts.
+
+app_title: mason276752 文章後台
+logo_url: /favicon.svg
+
+backend:
+  name: github
+  repo: mason276752/mason276752.github.io
+  branch: main
+  # There's no OAuth server for this site, so sign in with a personal access token (see README).
+  auth_methods: [token]
+  commit_messages:
+    create: '新增文章：{{slug}}'
+    update: '更新文章：{{slug}}'
+    delete: '刪除文章：{{slug}}'
+    uploadMedia: '上傳圖片：{{path}}'
+    deleteMedia: '刪除圖片：{{path}}'
+
+# Uploaded images go to public/images/blog/ and are linked as /images/blog/<file>.
+media_folder: public/images/blog
+public_folder: /images/blog
+
+output:
+  omit_empty_optional_fields: true
+
+collections:
+  - name: blog
+    label: 文章
+    icon: article
+    folder: src/content/blog
+    extension: md
+    format: frontmatter
+    slug:
+      template: '{{title}}'
+      hint: 網址會是 /blog/<slug>/，存檔後也是檔名。建議用英文小寫和 -，例如 my-first-post。
+    summary: "{{title}}{{draft | ternary('（草稿）', '')}}"
+    sortable_fields:
+      fields: [date, title]
+      default: { field: date, direction: descending }
+    preview_path: /blog/{{slug}}/
+    fields:
+      - { name: title, label: 標題, widget: string }
+      - { name: date, label: 日期, widget: datetime, type: date, format: YYYY-MM-DD, default: '{{now}}' }
+      - name: description
+        label: 摘要
+        widget: text
+        required: false
+        hint: 列表和搜尋結果顯示的一句話。留空就取內文開頭。
+      - { name: tags, label: 標籤, widget: list, required: false }
+      - name: draft
+        label: 草稿
+        widget: boolean
+        default: false
+        required: false
+        hint: 打勾就不會出現在網站上。
+      - { name: updated, label: 更新日期, widget: datetime, type: date, format: YYYY-MM-DD, required: false }
+      - { name: body, label: 內文, widget: markdown }

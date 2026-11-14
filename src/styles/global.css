@@ -78,3 +78,11 @@ img { display: block; max-width: 100%; }
 .btn.primary:hover { filter: brightness(1.08); }
 
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Code blocks carry both Shiki themes (astro.config.mjs); switch to the dark one with the system. */
+@media (prefers-color-scheme: dark) {
+  .astro-code, .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+}
