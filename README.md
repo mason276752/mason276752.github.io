@@ -13,6 +13,7 @@ https://mason276752.github.io/ 的首頁，介紹放在這個網域底下的線�
 | 檔案處理 | 去背 | https://mason276752.github.io/removebg/ | [removebg](https://github.com/mason276752/removebg) |
 | 檔案處理 | 音檔變速 | https://mason276752.github.io/audiospeed/ | [audiospeed](https://github.com/mason276752/audiospeed) |
 | 檔案處理 | 文件掃描 | https://mason276752.github.io/document-jpg/ | [document-jpg](https://github.com/mason276752/document-jpg) |
+| 檔案處理 | PDF 壓縮 | https://mason276752.github.io/pdfcompress/ | [pdfcompress](https://github.com/mason276752/pdfcompress) |
 | 美股與選擇權 | 美股財報 | https://mason276752.github.io/stockscan/ | [stockscan](https://github.com/mason276752/stockscan) |
 | 美股與選擇權 | 選擇權計算機 | https://mason276752.github.io/OptionCalculator/ | [OptionCalculator](https://github.com/mason276752/OptionCalculator) |
 | 學習與遊戲 | 五十音測驗 | https://mason276752.github.io/50in/ | [50in](https://github.com/mason276752/50in) |

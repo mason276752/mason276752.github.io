@@ -14,7 +14,7 @@ const sections = [
   {
     key: 'files',
     title: '檔案處理',
-    lead: '圖片、文件、ZIP、音檔。檔案只在你的瀏覽器裡處理，不會上傳到任何伺服器。',
+    lead: '圖片、文件、PDF、ZIP、音檔。檔案只在你的瀏覽器裡處理，不會上傳到任何伺服器。',
     cta: '開啟工具',
   },
   {
@@ -47,6 +47,7 @@ const links = [
   { from: 'zipeditor', to: 'upscale', both: true, what: '勾選圖片送過去 AI 放大，放大後打包傳回來' },
   { from: 'zipeditor', to: 'removebg', both: true, what: '勾選圖片送過去去背、修補，完成後打包傳回來' },
   { from: 'zipeditor', to: 'audiospeed', both: true, what: '勾選音檔送過去變速或剪輯，完成後打包傳回來' },
+  { from: 'zipeditor', to: 'pdfcompress', both: true, what: '勾選 PDF 送過去壓縮，壓好打包傳回來' },
 ].filter((l) => byId[l.from] && byId[l.to]);
 
 const posts = (await getPosts()).slice(0, 3);
@@ -54,7 +55,7 @@ const posts = (await getPosts()).slice(0, 3);
 
 <BaseLayout
   title="mason276752 的線上小工具｜檔案處理、美股財報、選擇權、日文練習"
-  description="打開網頁就能用的小工具：圖片轉檔、AI 放大與去背、文件掃描、ZIP 編輯與簡繁轉換、音檔變速，還有美股財報、選擇權損益計算機、五十音測驗、21 點算牌練習與插圖搜尋。"
+  description="打開網頁就能用的小工具：圖片轉檔、AI 放大與去背、文件掃描、PDF 壓縮、ZIP 編輯與簡繁轉換、音檔變速，還有美股財報、選擇權損益計算機、五十音測驗、21 點算牌練習與插圖搜尋。"
 >
   <section class="wrap hero">
     <h1>瀏覽器裡的小工具</h1>
