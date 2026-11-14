@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostList from '../../components/PostList.astro';
+import { getPosts, tagUrl } from '../../lib/blog';
+
+const posts = await getPosts();
+
+const counts = new Map<string, number>();
+for (const tag of posts.flatMap((p) => p.data.tags)) counts.set(tag, (counts.get(tag) ?? 0) + 1);
+const tags = [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-TW'));
+---
+
+<BaseLayout title="文章 – mason276752" description="mason276752 的文章：工具的開發筆記與其他想寫的東西。">
+  <section class="wrap narrow">
+    <header class="head">
+      <h1>文章</h1>
+      <a class="rss" href="/blog/rss.xml">RSS</a>
+    </header>
+
+    {tags.length > 0 && (
+      <p class="tags">
+        {tags.map(([tag, n]) => <a href={tagUrl(tag)}>#{tag} <span>{n}</span></a>)}
+      </p>
+    )}
+
+    {posts.length > 0 ? <PostList posts={posts} /> : <p class="empty">還沒有文章。</p>}
+  </section>
+</BaseLayout>
+
+<style>
+  .narrow { max-width: 800px; }
+  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+  h1 { margin: 0; font-size: clamp(28px, 5vw, 36px); line-height: 1.2; }
+  .rss { color: var(--muted); font-size: 14px; text-decoration: none; }
+  .rss:hover { color: var(--accent); }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+  .tags a {
+    padding: 2px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--text);
+    font-size: 13px;
+    text-decoration: none;
+  }
+  .tags a:hover { border-color: var(--accent); color: var(--accent); }
+  .tags span { color: var(--muted); }
+
+  .empty { color: var(--muted); }
+</style>
