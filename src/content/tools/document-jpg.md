@@ -13,4 +13,4 @@ features:
   - 匯出 JPG、PNG，或把多頁合成一份 PDF
 ---
 
-用手機拍照或上傳照片，自動裁切、校正、去陰影，出來像掃描器掃的一樣，類似 Microsoft Lens。影像處理全在瀏覽器的 Web Worker 裡完成。
+用手機拍照或上傳照片，自動裁切、校正、去陰影，出來像掃描器掃的一樣，類似 Microsoft Lens。iPhone 的 HEIC 照片也能直接用。影像處理全在瀏覽器的 Web Worker 裡完成。
