@@ -7,16 +7,19 @@ const tools = (await getCollection('tools')).sort((a, b) => a.data.order - b.dat
 const byId = Object.fromEntries(tools.map((t) => [t.id, t]));
 
 // The tools share this origin, so tabs can pass files to each other over BroadcastChannel.
+// `both`: the tool also sends its results back to the ZIP editor.
 const links = [
   { from: 'zipeditor', to: 'ziptotaiwanzip', what: '按「簡繁轉換」把整個 ZIP 送過去，轉好自動傳回並套用' },
-  { from: 'zipeditor', to: 'paste2jpg', what: '勾選圖片送過去，轉成 JPG 或 WebP' },
-  { from: 'paste2jpg', to: 'zipeditor', what: '把轉好的圖片打包傳過去，開成新 ZIP 或合併進目前資料夾' },
+  { from: 'zipeditor', to: 'paste2jpg', both: true, what: '勾選圖片送過去轉成 JPG 或 WebP，轉好再打包傳回來' },
+  { from: 'zipeditor', to: 'upscale', both: true, what: '勾選圖片送過去 AI 放大，放大後打包傳回來' },
+  { from: 'zipeditor', to: 'removebg', both: true, what: '勾選圖片送過去去背、修補，完成後打包傳回來' },
+  { from: 'zipeditor', to: 'audiospeed', both: true, what: '勾選音檔送過去變速或剪輯，完成後打包傳回來' },
 ].filter((l) => byId[l.from] && byId[l.to]);
 ---
 
 <BaseLayout
-  title="mason276752 的線上小工具｜圖片轉檔、ZIP 編輯、簡繁轉換"
-  description="幾個純前端的線上工具：圖片貼上轉 JPG／WebP、在瀏覽器裡編輯 ZIP、ZIP 與 EPUB 整包簡繁轉換。檔案只在你的瀏覽器裡處理，不會上傳。"
+  title="mason276752 的線上小工具｜圖片轉檔、放大、去背、ZIP 編輯、音檔變速"
+  description="幾個純前端的線上工具：圖片轉 JPG／WebP、AI 圖片放大、AI 去背、在瀏覽器裡編輯 ZIP、ZIP 整包簡繁轉換、音檔變速不變調。檔案只在你的瀏覽器裡處理，不會上傳。"
 >
   <section class="wrap hero">
     <h1>瀏覽器裡的小工具</h1>
@@ -44,7 +47,7 @@ const links = [
           <li>
             <span class="route">
               <a href={byId[l.from].data.url}>{byId[l.from].data.name}</a>
-              <span class="arrow" aria-label="傳到">→</span>
+              <span class="arrow" aria-label={l.both ? '互傳' : '傳到'}>{l.both ? '⇄' : '→'}</span>
               <a href={byId[l.to].data.url}>{byId[l.to].data.name}</a>
             </span>
             <span class="what">{l.what}</span>

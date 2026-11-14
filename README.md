@@ -7,6 +7,9 @@ https://mason276752.github.io/ 的首頁，介紹放在這個網域底下的線�
 | Paste → JPG | https://mason276752.github.io/paste2jpg/ | [paste2jpg](https://github.com/mason276752/paste2jpg) |
 | ZIP 編輯器 | https://mason276752.github.io/zipeditor/ | [zipeditor](https://github.com/mason276752/zipeditor) |
 | 簡繁轉換 | https://mason276752.github.io/ziptotaiwanzip/ | [ziptotaiwanzip](https://github.com/mason276752/ziptotaiwanzip) |
+| 圖片放大 | https://mason276752.github.io/upscale/ | [upscale](https://github.com/mason276752/upscale) |
+| 去背 | https://mason276752.github.io/removebg/ | [removebg](https://github.com/mason276752/removebg) |
+| 音檔變速 | https://mason276752.github.io/audiospeed/ | [audiospeed](https://github.com/mason276752/audiospeed) |
 
 用 [Astro](https://astro.build/) 建置成純靜態網站。
 
