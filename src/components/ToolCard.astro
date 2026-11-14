@@ -3,9 +3,11 @@ import { render, type CollectionEntry } from 'astro:content';
 
 interface Props {
   tool: CollectionEntry<'tools'>;
+  // Label of the main button, e.g. 開始玩 for games.
+  cta?: string;
 }
 
-const { tool } = Astro.props;
+const { tool, cta = '開啟工具' } = Astro.props;
 const { name, tagline, url, repo, icon, features } = tool.data;
 const { Content } = await render(tool);
 ---
@@ -28,7 +30,7 @@ const { Content } = await render(tool);
   )}
 
   <footer>
-    <a class="btn primary" href={url}>開啟工具 →</a>
+    <a class="btn primary" href={url}>{cta} →</a>
     <a class="btn" href={repo}>原始碼</a>
   </footer>
 </article>

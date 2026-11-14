@@ -4,14 +4,22 @@ https://mason276752.github.io/ 的首頁，介紹放在這個網域底下的線�
 
 工具：
 
-| 工具 | 網址 | Repo |
-| --- | --- | --- |
-| Paste → JPG | https://mason276752.github.io/paste2jpg/ | [paste2jpg](https://github.com/mason276752/paste2jpg) |
-| ZIP 編輯器 | https://mason276752.github.io/zipeditor/ | [zipeditor](https://github.com/mason276752/zipeditor) |
-| 簡繁轉換 | https://mason276752.github.io/ziptotaiwanzip/ | [ziptotaiwanzip](https://github.com/mason276752/ziptotaiwanzip) |
-| 圖片放大 | https://mason276752.github.io/upscale/ | [upscale](https://github.com/mason276752/upscale) |
-| 去背 | https://mason276752.github.io/removebg/ | [removebg](https://github.com/mason276752/removebg) |
-| 音檔變速 | https://mason276752.github.io/audiospeed/ | [audiospeed](https://github.com/mason276752/audiospeed) |
+| 分類 | 工具 | 網址 | Repo |
+| --- | --- | --- | --- |
+| 檔案處理 | Paste → JPG | https://mason276752.github.io/paste2jpg/ | [paste2jpg](https://github.com/mason276752/paste2jpg) |
+| 檔案處理 | ZIP 編輯器 | https://mason276752.github.io/zipeditor/ | [zipeditor](https://github.com/mason276752/zipeditor) |
+| 檔案處理 | 簡繁轉換 | https://mason276752.github.io/ziptotaiwanzip/ | [ziptotaiwanzip](https://github.com/mason276752/ziptotaiwanzip) |
+| 檔案處理 | 圖片放大 | https://mason276752.github.io/upscale/ | [upscale](https://github.com/mason276752/upscale) |
+| 檔案處理 | 去背 | https://mason276752.github.io/removebg/ | [removebg](https://github.com/mason276752/removebg) |
+| 檔案處理 | 音檔變速 | https://mason276752.github.io/audiospeed/ | [audiospeed](https://github.com/mason276752/audiospeed) |
+| 檔案處理 | 文件掃描 | https://mason276752.github.io/document-jpg/ | [document-jpg](https://github.com/mason276752/document-jpg) |
+| 美股與選擇權 | 美股財報 | https://mason276752.github.io/stockscan/ | [stockscan](https://github.com/mason276752/stockscan) |
+| 美股與選擇權 | 選擇權計算機 | https://mason276752.github.io/OptionCalculator/ | [OptionCalculator](https://github.com/mason276752/OptionCalculator) |
+| 學習與遊戲 | 五十音測驗 | https://mason276752.github.io/50in/ | [50in](https://github.com/mason276752/50in) |
+| 學習與遊戲 | 21 點 | https://mason276752.github.io/blackjack/ | [blackjack](https://github.com/mason276752/blackjack) |
+| 學習與遊戲 | 深刻地認識一個人 | https://mason276752.github.io/you-know-me/ | [you-know-me](https://github.com/mason276752/you-know-me) |
+| 插圖搜尋 | いらすとや圖庫 | https://mason276752.github.io/irasutoya_scan/ | [irasutoya_scan](https://github.com/mason276752/irasutoya_scan) |
+| 插圖搜尋 | Storyset 圖庫 | https://mason276752.github.io/storyset_scan/ | [storyset_scan](https://github.com/mason276752/storyset_scan) |
 
 用 [Astro](https://astro.build/) 建置成純靜態網站。
 
@@ -112,7 +120,8 @@ tagline: 一句話說明
 url: https://mason276752.github.io/<repo>/
 repo: https://github.com/mason276752/<repo>
 icon: /icons/<repo>.svg
-order: 4
+category: files      # 放在哪一區：files 檔案處理、finance 美股與選擇權、learn 學習與遊戲、gallery 插圖搜尋
+order: 4             # 同一區裡越小越前面
 features:
   - 特色一
   - 特色二
@@ -121,7 +130,7 @@ features:
 一段介紹。
 ```
 
-工具之間的串接說明在 `src/pages/index.astro` 的 `links`。
+首頁各區的標題、說明和按鈕文字在 `src/pages/index.astro` 的 `sections`，工具之間的串接說明在同一個檔案的 `links`。
 
 **新增頁面**：在 `src/pages/` 加 `.astro` 或 `.md`，例如 `src/pages/about.astro` → `/about/`。
 

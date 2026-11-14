@@ -4,6 +4,7 @@ tagline: 不用解壓縮，直接改 ZIP
 url: https://mason276752.github.io/zipeditor/
 repo: https://github.com/mason276752/zipeditor
 icon: /icons/zipeditor.svg
+category: files
 order: 2
 features:
   - 新增、刪除、重新命名、搬移檔案與資料夾

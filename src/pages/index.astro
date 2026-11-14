@@ -8,6 +8,37 @@ import { getPosts } from '../lib/blog';
 const tools = (await getCollection('tools')).sort((a, b) => a.data.order - b.data.order);
 const byId = Object.fromEntries(tools.map((t) => [t.id, t]));
 
+// Home page sections, in order. Each tool goes in the one its `category` names.
+// `cta`: label of the main button on the cards.
+const sections = [
+  {
+    key: 'files',
+    title: '檔案處理',
+    lead: '圖片、文件、ZIP、音檔。檔案只在你的瀏覽器裡處理，不會上傳到任何伺服器。',
+    cta: '開啟工具',
+  },
+  {
+    key: 'finance',
+    title: '美股與選擇權',
+    lead: '看美股財報、試算選擇權部位。數據有時間差，僅供參考。',
+    cta: '開啟工具',
+  },
+  {
+    key: 'learn',
+    title: '學習與遊戲',
+    lead: '背日文、練 21 點算牌，還有一副聚會聊天用的提問卡。',
+    cta: '開始玩',
+  },
+  {
+    key: 'gallery',
+    title: '插圖搜尋',
+    lead: '把免費插圖網站整理成一頁縮圖牆，用標籤和關鍵字找圖。圖片由原網站提供，使用前請看各網站的授權規定。',
+    cta: '開啟圖庫',
+  },
+]
+  .map((s) => ({ ...s, tools: tools.filter((t) => t.data.category === s.key) }))
+  .filter((s) => s.tools.length > 0);
+
 // The tools share this origin, so tabs can pass files to each other over BroadcastChannel.
 // `both`: the tool also sends its results back to the ZIP editor.
 const links = [
@@ -22,44 +53,54 @@ const posts = (await getPosts()).slice(0, 3);
 ---
 
 <BaseLayout
-  title="mason276752 的線上小工具｜圖片轉檔、放大、去背、ZIP 編輯、音檔變速"
-  description="幾個純前端的線上工具：圖片轉 JPG／WebP、AI 圖片放大、AI 去背、在瀏覽器裡編輯 ZIP、ZIP 整包簡繁轉換、音檔變速不變調。檔案只在你的瀏覽器裡處理，不會上傳。"
+  title="mason276752 的線上小工具｜檔案處理、美股財報、選擇權、日文練習"
+  description="打開網頁就能用的小工具：圖片轉檔、AI 放大與去背、文件掃描、ZIP 編輯與簡繁轉換、音檔變速，還有美股財報、選擇權損益計算機、五十音測驗、21 點算牌練習與插圖搜尋。"
 >
   <section class="wrap hero">
     <h1>瀏覽器裡的小工具</h1>
-    <p>
-      幾個純前端的線上工具：檔案只在你自己的瀏覽器裡處理，不會上傳到任何伺服器。
-      免安裝、免註冊，手機也能用。
-    </p>
-  </section>
-
-  <section class="wrap" aria-labelledby="tools-heading">
-    <h2 id="tools-heading" class="section-title">工具</h2>
-    <div class="grid">
-      {tools.map((tool) => <ToolCard tool={tool} />)}
-    </div>
-  </section>
-
-  {links.length > 0 && (
-    <section class="wrap" aria-labelledby="links-heading">
-      <h2 id="links-heading" class="section-title">互相串接</h2>
-      <p class="lead">
-        工具都放在 mason276752.github.io 底下，同一個瀏覽器裡的分頁可以直接互傳檔案；對方沒開的話會自動開新分頁。
-      </p>
-      <ul class="links panel">
-        {links.map((l) => (
-          <li>
-            <span class="route">
-              <a href={byId[l.from].data.url}>{byId[l.from].data.name}</a>
-              <span class="arrow" aria-label={l.both ? '互傳' : '傳到'}>{l.both ? '⇄' : '→'}</span>
-              <a href={byId[l.to].data.url}>{byId[l.to].data.name}</a>
-            </span>
-            <span class="what">{l.what}</span>
-          </li>
+    <p>打開網頁就能用：免安裝、免註冊，手機也能用。處理檔案的工具全在你自己的瀏覽器裡執行，檔案不會上傳。</p>
+    {sections.length > 1 && (
+      <nav class="jump" aria-label="工具分類">
+        {sections.map((s) => (
+          <a href={`#${s.key}`}>
+            {s.title}
+            <span>{s.tools.length}</span>
+          </a>
         ))}
-      </ul>
+      </nav>
+    )}
+  </section>
+
+  {sections.map((s) => (
+    <section class="wrap" id={s.key} aria-labelledby={`${s.key}-heading`}>
+      <h2 id={`${s.key}-heading`} class="section-title">{s.title}</h2>
+      <p class="lead">{s.lead}</p>
+      <div class="grid">
+        {s.tools.map((tool) => <ToolCard tool={tool} cta={s.cta} />)}
+      </div>
+
+      {s.key === 'files' && links.length > 0 && (
+        <div class="links-block">
+          <h3>互相串接</h3>
+          <p class="lead">
+            工具都放在 mason276752.github.io 底下，同一個瀏覽器裡的分頁可以直接互傳檔案；對方沒開的話會自動開新分頁。
+          </p>
+          <ul class="links panel">
+            {links.map((l) => (
+              <li>
+                <span class="route">
+                  <a href={byId[l.from].data.url}>{byId[l.from].data.name}</a>
+                  <span class="arrow" aria-label={l.both ? '互傳' : '傳到'}>{l.both ? '⇄' : '→'}</span>
+                  <a href={byId[l.to].data.url}>{byId[l.to].data.name}</a>
+                </span>
+                <span class="what">{l.what}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
-  )}
+  ))}
 
   {posts.length > 0 && (
     <section class="wrap" aria-labelledby="posts-heading">
@@ -71,7 +112,7 @@ const posts = (await getPosts()).slice(0, 3);
 </BaseLayout>
 
 <style>
-  .hero { margin-bottom: 40px; }
+  .hero { margin-bottom: 48px; }
   .hero h1 {
     margin: 0 0 12px;
     font-size: clamp(28px, 5vw, 40px);
@@ -80,14 +121,42 @@ const posts = (await getPosts()).slice(0, 3);
   }
   .hero p { margin: 0; max-width: 36em; color: var(--muted); font-size: 17px; }
 
-  .section-title {
-    margin: 0 0 16px;
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
+  .jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+  .jump a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px 6px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
   }
-  section + section { margin-top: 48px; }
+  .jump a:hover { border-color: var(--accent); color: var(--accent); }
+  .jump span {
+    min-width: 22px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: center;
+  }
+
+  section[id] { scroll-margin-top: 24px; }
+  section + section { margin-top: 64px; }
+
+  .section-title {
+    margin: 0 0 4px;
+    font-size: 22px;
+    line-height: 1.3;
+  }
+  .lead { margin: 0 0 20px; max-width: 40em; color: var(--muted); font-size: 15px; }
 
   .grid {
     display: grid;
@@ -95,7 +164,15 @@ const posts = (await getPosts()).slice(0, 3);
     gap: 16px;
   }
 
-  .lead { margin: -4px 0 16px; max-width: 40em; color: var(--muted); font-size: 15px; }
+  .links-block { margin-top: 40px; }
+  .links-block h3 {
+    margin: 0 0 4px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+  .links-block .lead { margin-bottom: 16px; }
 
   .links { margin: 0; padding: 0; list-style: none; }
   .links li {
@@ -112,6 +189,7 @@ const posts = (await getPosts()).slice(0, 3);
   .arrow { margin: 0 6px; color: var(--muted); font-weight: 400; }
   .what { color: var(--muted); font-size: 14px; }
 
+  #posts-heading { margin-bottom: 16px; }
   .more { margin: 12px 0 0; font-size: 14px; }
   .more a { text-decoration: none; }
 </style>

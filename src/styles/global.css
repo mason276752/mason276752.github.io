@@ -32,6 +32,11 @@
 
 html { -webkit-text-size-adjust: 100%; }
 
+/* The home page's category links jump within the page. */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
 body {
   margin: 0;
   background: var(--bg);

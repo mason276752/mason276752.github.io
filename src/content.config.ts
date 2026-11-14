@@ -12,7 +12,9 @@ const tools = defineCollection({
     repo: z.url(),
     icon: z.string(),
     features: z.array(z.string()).default([]),
-    // Lower comes first on the home page.
+    // Which section of the home page it goes in; the sections are listed in src/pages/index.astro.
+    category: z.enum(['files', 'finance', 'learn', 'gallery']).default('files'),
+    // Lower comes first within its section.
     order: z.number().default(100),
   }),
 });

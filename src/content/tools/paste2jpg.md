@@ -4,6 +4,7 @@ tagline: 圖片貼上就轉 JPG／WebP
 url: https://mason276752.github.io/paste2jpg/
 repo: https://github.com/mason276752/paste2jpg
 icon: /icons/paste2jpg.svg
+category: files
 order: 1
 features:
   - 桌機按 ⌘V／Ctrl+V 貼上，手機可讀取剪貼簿

@@ -4,6 +4,7 @@ tagline: AI 放大 4 倍，補回細節
 url: https://mason276752.github.io/upscale/
 repo: https://github.com/mason276752/upscale
 icon: /icons/upscale.svg
+category: files
 order: 4
 features:
   - SPAN 超解析度模型，4× 或 2×

@@ -4,6 +4,7 @@ tagline: 加快或放慢，音高不變
 url: https://mason276752.github.io/audiospeed/
 repo: https://github.com/mason276752/audiospeed
 icon: /icons/audiospeed.svg
+category: files
 order: 6
 features:
   - 0.25×～4×，聲音不會變成花栗鼠或大叔

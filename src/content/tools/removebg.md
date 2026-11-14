@@ -4,6 +4,7 @@ tagline: AI 去除背景，可以手動修補
 url: https://mason276752.github.io/removebg/
 repo: https://github.com/mason276752/removebg
 icon: /icons/removebg.svg
+category: files
 order: 5
 features:
   - BiRefNet 模型，人像、商品、動物都適用

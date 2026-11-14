@@ -4,6 +4,7 @@ tagline: ZIP、EPUB 整包轉臺灣繁體
 url: https://mason276752.github.io/ziptotaiwanzip/
 repo: https://github.com/mason276752/ziptotaiwanzip
 icon: /icons/ziptotaiwanzip.svg
+category: files
 order: 3
 features:
   - 檔名和文字內容一起轉，圖片等檔案原樣保留
