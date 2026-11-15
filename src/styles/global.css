@@ -84,6 +84,47 @@ img { display: block; max-width: 100%; }
 
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+/* Long-form Markdown: posts, and the write-ups of albums and photos. */
+.prose { font-size: 17px; line-height: 1.85; overflow-wrap: break-word; }
+.prose > :first-child { margin-top: 0; }
+.prose :is(p, ul, ol, blockquote, pre, table, figure, hr) { margin: 0 0 1.2em; }
+.prose :is(h2, h3, h4) { margin: 2em 0 0.6em; line-height: 1.4; scroll-margin-top: 16px; }
+.prose h2 { font-size: 1.45em; }
+.prose h3 { font-size: 1.2em; }
+.prose h4 { font-size: 1em; }
+.prose :is(ul, ol) { padding-left: 1.5em; }
+.prose li + li { margin-top: 0.3em; }
+.prose li > :is(ul, ol) { margin: 0.3em 0 0; }
+.prose img { height: auto; margin: 0 auto; border-radius: 10px; }
+.prose hr { border: 0; border-top: 1px solid var(--line); margin: 2.4em 0; }
+
+.prose blockquote {
+  padding: 0.2em 0 0.2em 1em;
+  border-left: 3px solid var(--line);
+  color: var(--muted);
+}
+.prose blockquote > :last-child { margin-bottom: 0; }
+
+.prose :not(pre) > code {
+  padding: 0.15em 0.4em;
+  border-radius: 6px;
+  background: var(--accent-soft);
+  font-size: 0.88em;
+}
+.prose :is(code, pre) { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.prose pre {
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.prose table { display: block; max-width: 100%; border-collapse: collapse; font-size: 15px; overflow-x: auto; }
+.prose :is(th, td) { padding: 8px 12px; border: 1px solid var(--line); text-align: left; }
+.prose th { background: var(--panel); }
+
 /* Code blocks carry both Shiki themes (astro.config.mjs); switch to the dark one with the system. */
 @media (prefers-color-scheme: dark) {
   .astro-code, .astro-code span {

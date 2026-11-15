@@ -1,0 +1,173 @@
+---
+import { getImage, Image } from 'astro:assets';
+import { render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { editUrl, excerpt, formatDate } from '../../../lib/blog';
+import {
+  albumUrl,
+  getAlbums,
+  getPhotosByAlbum,
+  largeImage,
+  photoName,
+  photoUrl,
+  type Album,
+  type Photo,
+} from '../../../lib/photos';
+
+export async function getStaticPaths() {
+  const byAlbum = await getPhotosByAlbum();
+  return (await getAlbums()).flatMap((album) => {
+    const photos = byAlbum.get(album.id) ?? [];
+    return photos.map((photo, i) => ({
+      params: { album: album.id, photo: photo.id.slice(album.id.length + 1) },
+      props: { album, photo, prev: photos[i - 1], next: photos[i + 1], total: photos.length },
+    }));
+  });
+}
+
+interface Props {
+  album: Album;
+  photo: Photo;
+  prev?: Photo;
+  next?: Photo;
+  total: number;
+}
+
+const { album, photo, prev, next, total } = Astro.props;
+const { image, text, gear } = photo.data;
+// Taken during the album unless it says otherwise.
+const place = photo.data.place ?? album.data.place;
+const date = photo.data.date ?? album.data.date;
+const name = photoName(photo, album);
+const ratio = image.width / image.height;
+const large = await largeImage(photo);
+const share = await getImage({ src: image, width: Math.min(image.width, 1200), format: 'jpg' });
+const { Content } = await render(photo);
+---
+
+<BaseLayout
+  title={`${name} – ${album.data.title} – mason276752`}
+  description={excerpt(text, 120) || `${album.data.title}的第 ${photo.data.index + 1} 張照片。`}
+  image={share.src}
+  type="article"
+>
+  <article>
+    <div class="wrap top">
+      <a class="back" href={albumUrl(album)}>← {album.data.title}</a>
+      <span>{photo.data.index + 1} / {total}</span>
+    </div>
+
+    <figure class="shot">
+      <img
+        src={large.src}
+        srcset={large.srcSet.attribute}
+        sizes={`min(100vw, ${(ratio * 80).toFixed(1)}vh)`}
+        width={image.width}
+        height={image.height}
+        alt={name}
+        style={`--r: ${ratio.toFixed(4)}`}
+      />
+    </figure>
+
+    <div class="wrap narrow">
+      <header>
+        <h1>{name}</h1>
+        <p class="meta">
+          {place && <span>{place}</span>}
+          <time datetime={date.toISOString()}>{formatDate(date)}</time>
+          {gear && <span>{gear}</span>}
+        </p>
+      </header>
+
+      {text && <div class="prose"><Content /></div>}
+
+      <nav class="steps" aria-label="同相簿的照片">
+        {prev ? (
+          <a class="prev" href={photoUrl(prev)} rel="prev">
+            <Image src={prev.data.image} alt={''} width={160} height={120} fit="cover" />
+            <span>← 上一張</span>
+          </a>
+        ) : <span />}
+        {next && (
+          <a class="next" href={photoUrl(next)} rel="next">
+            <span>下一張 →</span>
+            <Image src={next.data.image} alt={''} width={160} height={120} fit="cover" />
+          </a>
+        )}
+      </nav>
+
+      <footer>
+        <a href={albumUrl(album)}>← 回到相簿</a>
+        <a href={editUrl(album)}>在 GitHub 上編輯</a>
+      </footer>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .narrow { max-width: 760px; }
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: -24px;
+    color: var(--muted);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .back, footer a { color: var(--muted); font-size: 14px; text-decoration: none; }
+  .back:hover, footer a:hover { color: var(--accent); }
+
+  /* As large as fits on screen, a bit wider than the text. */
+  .shot { display: flex; justify-content: center; margin: 16px auto 32px; padding: 0 20px; max-width: 1280px; }
+  .shot img {
+    width: min(100%, calc(80dvh * var(--r)));
+    height: auto;
+    border-radius: 6px;
+  }
+  @media (max-width: 640px) {
+    .shot { padding: 0; }
+    .shot img { border-radius: 0; }
+  }
+
+  header { margin-bottom: 24px; }
+  h1 { margin: 0; font-size: clamp(24px, 4.5vw, 32px); line-height: 1.35; letter-spacing: -0.01em; }
+  .meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+
+  .steps {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 40px;
+  }
+  .steps a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 14px;
+    text-decoration: none;
+  }
+  .steps a:hover { color: var(--accent); }
+  .steps img { width: 80px; height: 60px; border-radius: 6px; object-fit: cover; }
+
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+</style>
+
+<script>
+  // ← → step through the album.
+  document.addEventListener('keydown', (e) => {
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    const rel = ({ ArrowLeft: 'prev', ArrowRight: 'next' } as Record<string, string>)[e.key];
+    if (rel) document.querySelector<HTMLAnchorElement>(`a[rel=${rel}]`)?.click();
+  });
+</script>

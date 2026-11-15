@@ -14,7 +14,8 @@ export const postUrl = (post: Post) => `/blog/${post.id}/`;
 
 export const tagUrl = (tag: string) => `/blog/tags/${encodeURIComponent(tag)}/`;
 
-export const editUrl = (post: Post) => `${REPO}/edit/main/${post.filePath}`;
+/** Edit the entry's file on GitHub. Works for any content entry: posts, albums. */
+export const editUrl = (entry: { filePath?: string }) => `${REPO}/edit/main/${entry.filePath}`;
 
 // Dates without a time are midnight UTC, which is the same day in Taipei.
 const dateFormat = new Intl.DateTimeFormat('zh-TW', {
@@ -28,8 +29,12 @@ export const formatDate = (date: Date) => dateFormat.format(date);
 
 /** `description`, or the first ~120 characters of the post as plain text. */
 export function summary(post: Post, length = 120): string {
-  if (post.data.description) return post.data.description;
-  const text = (post.body ?? '')
+  return post.data.description ?? excerpt(post.body, length);
+}
+
+/** Markdown as plain text, cut to about `length` characters. */
+export function excerpt(markdown = '', length = 120): string {
+  const text = markdown
     .replace(/^(```|~~~)[^\n]*\n[\s\S]*?^\1/gm, '') // fenced code
     .replace(/^[\s|:-]+$/gm, '') // table delimiter rows, horizontal rules
     .replace(/<[^>]+>/g, '') // HTML tags

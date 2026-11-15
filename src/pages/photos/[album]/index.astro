@@ -1,0 +1,95 @@
+---
+import { getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PhotoGrid from '../../../components/PhotoGrid.astro';
+import { editUrl, formatDate } from '../../../lib/blog';
+import { albumSummary, getAlbums, getPhotosByAlbum, type Album, type Photo } from '../../../lib/photos';
+
+export async function getStaticPaths() {
+  const photos = await getPhotosByAlbum();
+  return (await getAlbums()).map((album) => ({
+    params: { album: album.id },
+    props: { album, photos: photos.get(album.id) ?? [] },
+  }));
+}
+
+interface Props {
+  album: Album;
+  photos: Photo[];
+}
+
+const { album, photos } = Astro.props;
+const { title, date, place, draft } = album.data;
+const { Content } = await render(album);
+const cover = photos[0]?.data.image;
+const share = cover && (await getImage({ src: cover, width: Math.min(cover.width, 1200), format: 'jpg' }));
+---
+
+<BaseLayout
+  title={`${title} – 作品集 – mason276752`}
+  description={albumSummary(album, 120) || `${title}，${photos.length} 張照片。`}
+  image={share ? share.src : undefined}
+>
+  <article>
+    <header class="wrap narrow">
+      <a class="back" href="/photos/">← 所有相簿</a>
+      <h1>{title}{draft && <span class="draft">草稿</span>}</h1>
+      <p class="meta">
+        <time datetime={date.toISOString()}>{formatDate(date)}</time>
+        {place && <span>{place}</span>}
+        <span>{photos.length} 張照片</span>
+      </p>
+    </header>
+
+    {album.body?.trim() && <div class="wrap narrow prose"><Content /></div>}
+
+    {photos.length > 0 && (
+      <div class="wrap photos">
+        <PhotoGrid album={album} photos={photos} />
+      </div>
+    )}
+
+    <div class="wrap narrow">
+      <footer>
+        <a href="/photos/">← 所有相簿</a>
+        <a href={editUrl(album)}>在 GitHub 上編輯</a>
+      </footer>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .narrow { max-width: 760px; }
+
+  .back, footer a { color: var(--muted); font-size: 14px; text-decoration: none; }
+  .back:hover, footer a:hover { color: var(--accent); }
+
+  header { margin-bottom: 32px; }
+  h1 { margin: 8px 0 0; font-size: clamp(28px, 5vw, 36px); line-height: 1.3; letter-spacing: -0.01em; }
+  .meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+
+  .draft {
+    margin-left: 10px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0;
+    vertical-align: 6px;
+  }
+
+  .prose + .photos { margin-top: 40px; }
+
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+</style>

@@ -5,14 +5,18 @@ interface Props {
   title: string;
   description: string;
   type?: 'website' | 'article';
+  // Preview image when the page is shared, e.g. a photo.
+  image?: string;
 }
 
-const { title, description, type = 'website' } = Astro.props;
+const { title, description, type = 'website', image } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 
 const path = Astro.url.pathname;
 const nav = [
-  { href: '/', label: '工具', current: path === '/' },
+  { href: '/', label: '關於', current: path === '/' },
+  { href: '/photos/', label: '作品集', current: path.startsWith('/photos/') },
+  { href: '/tools/', label: '工具', current: path.startsWith('/tools/') },
   { href: '/blog/', label: '文章', current: path.startsWith('/blog/') },
 ];
 ---
@@ -33,6 +37,8 @@ const nav = [
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    {image && <meta property="og:image" content={new URL(image, Astro.site)} />}
+    {image && <meta name="twitter:card" content="summary_large_image" />}
     <link rel="alternate" type="application/rss+xml" title="mason276752 的文章" href="/blog/rss.xml" />
     <meta name="generator" content={Astro.generator} />
   </head>
@@ -84,6 +90,12 @@ const nav = [
   nav { display: flex; gap: 20px; }
   nav a { color: var(--muted); font-size: 14px; text-decoration: none; }
   nav a:hover, nav a[aria-current] { color: var(--text); }
+
+  /* Room for all the links on a phone: keep just the icon. */
+  @media (max-width: 480px) {
+    .brand span { display: none; }
+    nav { gap: 16px; }
+  }
 
   main { padding: 48px 0 64px; }
 

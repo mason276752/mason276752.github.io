@@ -1,8 +1,8 @@
 # Online editor at /admin/ (Sveltia CMS): https://sveltiacms.app/en/docs
 # Saving commits straight to main, which redeploys the site.
-# Keep the fields in sync with the `blog` collection in src/content.config.ts.
+# Keep the fields in sync with src/content.config.ts (blog, albums, photos) and src/pages/index.astro (about).
 
-app_title: mason276752 文章後台
+app_title: mason276752 網站後台
 logo_url: /favicon.svg
 
 backend:
@@ -12,13 +12,14 @@ backend:
   # There's no OAuth server for this site, so sign in with a personal access token (see README).
   auth_methods: [token]
   commit_messages:
-    create: '新增文章：{{slug}}'
-    update: '更新文章：{{slug}}'
-    delete: '刪除文章：{{slug}}'
+    create: '新增{{collection}}：{{slug}}'
+    update: '更新{{collection}}：{{slug}}'
+    delete: '刪除{{collection}}：{{slug}}'
     uploadMedia: '上傳圖片：{{path}}'
     deleteMedia: '刪除圖片：{{path}}'
 
 # Uploaded images go to public/images/blog/ and are linked as /images/blog/<file>.
+# Photos are the exception: see the photos collection.
 media_folder: public/images/blog
 public_folder: /images/blog
 
@@ -28,6 +29,7 @@ output:
 collections:
   - name: blog
     label: 文章
+    label_singular: 文章
     icon: article
     folder: src/content/blog
     extension: md
@@ -57,3 +59,75 @@ collections:
         hint: 打勾就不會出現在網站上。
       - { name: updated, label: 更新日期, widget: datetime, type: date, format: YYYY-MM-DD, required: false }
       - { name: body, label: 內文, widget: markdown }
+
+  - name: albums
+    label: 作品集
+    label_singular: 相簿
+    icon: photo_library
+    folder: src/content/albums
+    # One folder per album, with the photos saved next to index.md (Astro optimizes them at build time).
+    path: '{{slug}}/index'
+    media_folder: ''
+    public_folder: ''
+    extension: md
+    format: frontmatter
+    slug:
+      template: '{{title}}'
+      hint: 網址會是 /photos/<slug>/，存檔後也是資料夾名稱。建議用英文小寫和 -，例如 2026-kyoto。
+    summary: "{{title}}{{draft | ternary('（草稿）', '')}}"
+    sortable_fields:
+      fields: [date, title]
+      default: { field: date, direction: descending }
+    preview_path: /photos/{{slug}}/
+    fields:
+      - { name: title, label: 相簿名稱, widget: string }
+      - { name: date, label: 日期, widget: datetime, type: date, format: YYYY-MM-DD, default: '{{now}}', hint: 相簿依這個日期排序，新的在前。 }
+      - { name: place, label: 地點, widget: string, required: false, hint: 例如：京都 }
+      - name: description
+        label: 摘要
+        widget: text
+        required: false
+        hint: 相簿列表顯示的一句話。留空就取文章開頭。
+      - name: draft
+        label: 草稿
+        widget: boolean
+        default: false
+        required: false
+        hint: 打勾就不會出現在網站上。
+      - name: photos
+        label: 照片
+        label_singular: 照片
+        widget: list
+        hint: 第一張是封面，可以拖曳排序。
+        summary: '{{fields.title}}'
+        fields:
+          - name: image
+            label: 照片
+            widget: image
+            hint: 手機或相機的 HEIC／JPG 都可以直接上傳，會先在瀏覽器裡縮到長邊 2560px、轉成 WebP，並移除 EXIF（包括 GPS 位置）。
+            media_libraries:
+              all:
+                transformations:
+                  raster_image: { format: webp, quality: 90, width: 2560, height: 2560 }
+          - { name: title, label: 標題, widget: string, required: false }
+          - { name: text, label: 說明, widget: markdown, required: false, hint: 這張照片的故事。短的會顯示在大圖下方，長的另有單張頁面。 }
+          - { name: date, label: 拍攝日期, widget: datetime, type: date, format: YYYY-MM-DD, required: false }
+          - { name: place, label: 地點, widget: string, required: false, hint: 例如：伏見稻荷 }
+          - { name: gear, label: 器材, widget: string, required: false, hint: 相機和鏡頭，例如：Sony α7C II · FE 40mm F2.5 }
+      - { name: body, label: 相簿文章, widget: markdown, required: false, hint: 關於這個相簿的文章，顯示在照片上方。可以留空。 }
+
+  - name: pages
+    label: 頁面
+    label_singular: 頁面
+    icon: person
+    files:
+      - name: about
+        label: 關於我（首頁）
+        file: src/content/about.md
+        format: frontmatter
+        preview_path: /
+        fields:
+          - { name: name, label: 名字, widget: string, hint: 首頁標題「嗨，我是 ○○」 }
+          - { name: status, label: 近況, widget: string, hint: 首頁最上面的小標籤，例如：日本打工度假中 }
+          - { name: description, label: 摘要, widget: text, hint: 搜尋結果和分享連結顯示的一句話。 }
+          - { name: body, label: 自我介紹, widget: markdown }

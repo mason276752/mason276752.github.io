@@ -1,0 +1,74 @@
+---
+import { Image } from 'astro:assets';
+import { formatDate } from '../lib/blog';
+import { albumSummary, albumUrl, type Album, type Photo } from '../lib/photos';
+
+interface Props {
+  album: Album;
+  photos: Photo[];
+}
+
+const { album, photos } = Astro.props;
+const { title, date, place, draft } = album.data;
+// The first photo in the list is the cover.
+const cover = photos[0]?.data.image;
+const summary = albumSummary(album);
+---
+
+<a class="album panel" href={albumUrl(album)}>
+  <div class="cover">
+    {cover && (
+      <Image
+        src={cover}
+        alt=""
+        width={960}
+        height={640}
+        fit="cover"
+        widths={[480, 960]}
+        sizes="(max-width: 700px) 100vw, 360px"
+      />
+    )}
+  </div>
+  <div class="info">
+    <h3>{title}{draft && <span class="draft">草稿</span>}</h3>
+    <p class="meta">
+      <time datetime={date.toISOString()}>{formatDate(date)}</time>
+      {place && <span>{place}</span>}
+      <span>{photos.length} 張</span>
+    </p>
+    {summary && <p class="summary">{summary}</p>}
+  </div>
+</a>
+
+<style>
+  .album {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .cover { aspect-ratio: 3 / 2; overflow: hidden; background: var(--line); }
+  .cover img { width: 100%; height: 100%; object-fit: cover; }
+  @media (prefers-reduced-motion: no-preference) {
+    .cover img { transition: transform 0.4s ease; }
+    .album:hover .cover img { transform: scale(1.03); }
+  }
+
+  .info { padding: 16px 20px 18px; }
+  h3 { margin: 0; font-size: 18px; line-height: 1.4; }
+  .album:hover h3 { color: var(--accent); }
+  .meta { display: flex; flex-wrap: wrap; gap: 0 12px; margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+  .summary { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+
+  .draft {
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 500;
+    vertical-align: 2px;
+  }
+</style>

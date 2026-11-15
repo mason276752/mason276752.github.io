@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { albumPhotos } from './lib/album-photos';
 
 // One Markdown file per tool in src/content/tools/. The file name is the id.
 const tools = defineCollection({
@@ -48,4 +49,40 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { tools, blog };
+// `./photo.jpg`, relative to the .md file. The online editor writes a bare `photo.jpg`, which means the same.
+const relative = (v: unknown) => (typeof v === 'string' && !/^\.{0,2}\//.test(v) ? `./${v}` : v);
+
+// One folder per album in src/content/albums/: index.md with the photos beside it. The body is the album's
+// article; the `photos:` list is read by the `photos` collection below.
+// `npm run photo` and the online editor (public/admin/config.yml) both write this layout; keep the fields in sync.
+const albums = defineCollection({
+  loader: glob({ pattern: '*/index.md', base: './src/content/albums' }),
+  schema: z.object({
+    title: z.string(),
+    // Albums are listed newest first by this.
+    date: z.preprocess(day, z.coerce.date()),
+    place: z.preprocess(blank, z.string().optional()),
+    // Shown on the album's card. Falls back to the start of the article.
+    description: z.preprocess(blank, z.string().optional()),
+    draft: z.preprocess(blank, z.boolean().default(false)),
+  }),
+});
+
+// Every photo of every album, in list order (`index`). `text` is the photo's own write-up, in Markdown.
+const photos = defineCollection({
+  loader: albumPhotos('./src/content/albums'),
+  schema: ({ image }) =>
+    z.object({
+      album: z.string(),
+      index: z.number(),
+      image: z.preprocess(relative, image()),
+      title: z.preprocess(blank, z.string().optional()),
+      date: z.preprocess(day, z.coerce.date().optional()),
+      place: z.preprocess(blank, z.string().optional()),
+      // Camera and lens, e.g. `Sony α7C II · FE 40mm F2.5`.
+      gear: z.preprocess(blank, z.string().optional()),
+      text: z.preprocess(blank, z.string().optional()),
+    }),
+});
+
+export const collections = { tools, blog, albums, photos };

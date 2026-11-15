@@ -1,0 +1,182 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolCard from '../../components/ToolCard.astro';
+
+const tools = (await getCollection('tools')).sort((a, b) => a.data.order - b.data.order);
+const byId = Object.fromEntries(tools.map((t) => [t.id, t]));
+
+// Sections of this page, in order. Each tool goes in the one its `category` names.
+// `cta`: label of the main button on the cards.
+const sections = [
+  {
+    key: 'files',
+    title: '檔案處理',
+    lead: '圖片、文件、PDF、ZIP、音檔、Git repo。檔案只在你的瀏覽器裡處理，不會上傳到任何伺服器。',
+    cta: '開啟工具',
+  },
+  {
+    key: 'finance',
+    title: '美股與選擇權',
+    lead: '看美股財報、試算選擇權部位。數據有時間差，僅供參考。',
+    cta: '開啟工具',
+  },
+  {
+    key: 'learn',
+    title: '學習與遊戲',
+    lead: '背日文、練 21 點算牌，還有一副聚會聊天用的提問卡。',
+    cta: '開始玩',
+  },
+  {
+    key: 'gallery',
+    title: '插圖搜尋',
+    lead: '把免費插圖網站整理成一頁縮圖牆，用標籤和關鍵字找圖。圖片由原網站提供，使用前請看各網站的授權規定。',
+    cta: '開啟圖庫',
+  },
+]
+  .map((s) => ({ ...s, tools: tools.filter((t) => t.data.category === s.key) }))
+  .filter((s) => s.tools.length > 0);
+
+// The tools share this origin, so tabs can pass files to each other over BroadcastChannel.
+// `both`: results can also be sent back the other way.
+const links = [
+  { from: 'zipeditor', to: 'ziptotaiwanzip', what: '按「簡繁轉換」把整個 ZIP 送過去，轉好自動傳回並套用' },
+  { from: 'zipeditor', to: 'paste2jpg', both: true, what: '勾選圖片送過去轉成 JPG 或 WebP，轉好自動覆蓋原檔（副檔名跟著改）' },
+  { from: 'zipeditor', to: 'upscale', both: true, what: '勾選圖片送過去 AI 放大，放大好自動覆蓋原檔' },
+  { from: 'zipeditor', to: 'removebg', both: true, what: '勾選圖片送過去去背，去背好、每次修補都自動覆蓋原檔' },
+  { from: 'zipeditor', to: 'audiospeed', both: true, what: '勾選音檔送過去變速或剪輯，做好自動覆蓋原檔' },
+  { from: 'zipeditor', to: 'pdfcompress', both: true, what: '勾選 PDF 送過去壓縮，壓好自動覆蓋原檔' },
+  { from: 'upscale', to: 'removebg', both: true, what: '放大後直接去背，或去背後直接放大；圖原本從 ZIP 來的，最後的結果也會回到 ZIP' },
+  { from: 'removebg', to: 'paste2jpg', what: '去背的 PNG 送去轉成 WebP，保留透明、檔案小很多' },
+].filter((l) => byId[l.from] && byId[l.to]);
+---
+
+<BaseLayout
+  title="mason276752 的線上小工具｜檔案處理、美股財報、選擇權、日文練習"
+  description="打開網頁就能用的小工具：圖片轉檔、AI 放大與去背、文件掃描、PDF 壓縮、ZIP 編輯與簡繁轉換、音檔變速，還有美股財報、選擇權損益計算機、五十音測驗、21 點算牌練習與插圖搜尋。"
+>
+  <section class="wrap hero">
+    <h1>瀏覽器裡的小工具</h1>
+    <p>打開網頁就能用：免安裝、免註冊，手機也能用。處理檔案的工具全在你自己的瀏覽器裡執行，檔案不會上傳。</p>
+    {sections.length > 1 && (
+      <nav class="jump" aria-label="工具分類">
+        {sections.map((s) => (
+          <a href={`#${s.key}`}>
+            {s.title}
+            <span>{s.tools.length}</span>
+          </a>
+        ))}
+      </nav>
+    )}
+  </section>
+
+  {sections.map((s) => (
+    <section class="wrap" id={s.key} aria-labelledby={`${s.key}-heading`}>
+      <h2 id={`${s.key}-heading`} class="section-title">{s.title}</h2>
+      <p class="lead">{s.lead}</p>
+      <div class="grid">
+        {s.tools.map((tool) => <ToolCard tool={tool} cta={s.cta} />)}
+      </div>
+
+      {s.key === 'files' && links.length > 0 && (
+        <div class="links-block">
+          <h3>互相串接</h3>
+          <p class="lead">
+            工具都放在 mason276752.github.io 底下，同一個瀏覽器裡的分頁可以直接互傳檔案；對方沒開的話會自動開新分頁。從 ZIP 編輯器送出去的檔案，處理好、之後每次修改都會自動傳回來；圖片工具之間也能直接傳。
+          </p>
+          <ul class="links panel">
+            {links.map((l) => (
+              <li>
+                <span class="route">
+                  <a href={byId[l.from].data.url}>{byId[l.from].data.name}</a>
+                  <span class="arrow" aria-label={l.both ? '互傳' : '傳到'}>{l.both ? '⇄' : '→'}</span>
+                  <a href={byId[l.to].data.url}>{byId[l.to].data.name}</a>
+                </span>
+                <span class="what">{l.what}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </section>
+  ))}
+</BaseLayout>
+
+<style>
+  .hero { margin-bottom: 48px; }
+  .hero h1 {
+    margin: 0 0 12px;
+    font-size: clamp(28px, 5vw, 40px);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .hero p { margin: 0; max-width: 36em; color: var(--muted); font-size: 17px; }
+
+  .jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+  .jump a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px 6px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .jump a:hover { border-color: var(--accent); color: var(--accent); }
+  .jump span {
+    min-width: 22px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: center;
+  }
+
+  section[id] { scroll-margin-top: 24px; }
+  section + section { margin-top: 64px; }
+
+  .section-title {
+    margin: 0 0 4px;
+    font-size: 22px;
+    line-height: 1.3;
+  }
+  .lead { margin: 0 0 20px; max-width: 40em; color: var(--muted); font-size: 15px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 16px;
+  }
+
+  .links-block { margin-top: 40px; }
+  .links-block h3 {
+    margin: 0 0 4px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+  .links-block .lead { margin-bottom: 16px; }
+
+  .links { margin: 0; padding: 0; list-style: none; }
+  .links li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 16px;
+    padding: 14px 20px;
+  }
+  .links li + li { border-top: 1px solid var(--line); }
+  .route { flex: none; min-width: 15em; font-weight: 600; font-size: 15px; }
+  .route a { color: var(--text); text-decoration: none; }
+  .route a:hover { color: var(--accent); }
+  .arrow { margin: 0 6px; color: var(--muted); font-weight: 400; }
+  .what { color: var(--muted); font-size: 14px; }
+</style>
