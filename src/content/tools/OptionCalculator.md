@@ -5,7 +5,7 @@ url: https://mason276752.github.io/OptionCalculator/
 repo: https://github.com/mason276752/OptionCalculator
 icon: /icons/OptionCalculator.svg
 category: finance
-order: 2
+order: 3
 features:
   - 輸入現價、履約價、權利金與 IV，畫出損益曲線
   - 損益兩平點、時間價值、希臘字母與保證金

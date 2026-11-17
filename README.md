@@ -4,8 +4,8 @@ https://mason276752.github.io/ 的原始碼：
 
 | 頁面 | 網址 | 內容 |
 | --- | --- | --- |
-| 關於我 | https://mason276752.github.io/ | 自我介紹（日本打工度假中）、最新作品、工具和文章 |
-| 作品集 | https://mason276752.github.io/photos/ | 攝影作品：一個個相簿，相簿和每張照片都可以寫文章 |
+| 關於我 | https://mason276752.github.io/ | 自我介紹（日本打工度假中）、最新相簿、工具和文章 |
+| 相簿 | https://mason276752.github.io/photos/ | 攝影作品：一個個相簿，相簿和每張照片都可以寫文章 |
 | 工具 | https://mason276752.github.io/tools/ | 放在這個網域底下的線上小工具 |
 | 文章 | https://mason276752.github.io/blog/ | 文章 |
 
@@ -22,8 +22,9 @@ https://mason276752.github.io/ 的原始碼：
 | 檔案處理 | 文件掃描 | https://mason276752.github.io/document-jpg/ | [document-jpg](https://github.com/mason276752/document-jpg) |
 | 檔案處理 | PDF 壓縮 | https://mason276752.github.io/pdfcompress/ | [pdfcompress](https://github.com/mason276752/pdfcompress) |
 | 檔案處理 | Git 編輯器 | https://mason276752.github.io/giteditor/ | [giteditor](https://github.com/mason276752/giteditor) |
-| 美股與選擇權 | 美股財報 | https://mason276752.github.io/stockscan/ | [stockscan](https://github.com/mason276752/stockscan) |
-| 美股與選擇權 | 選擇權計算機 | https://mason276752.github.io/OptionCalculator/ | [OptionCalculator](https://github.com/mason276752/OptionCalculator) |
+| 股票與選擇權 | 美股財報 | https://mason276752.github.io/stockscan/ | [stockscan](https://github.com/mason276752/stockscan) |
+| 股票與選擇權 | 台股財報 | https://mason276752.github.io/stockscan-tw/ | [stockscan-tw](https://github.com/mason276752/stockscan-tw) |
+| 股票與選擇權 | 選擇權計算機 | https://mason276752.github.io/OptionCalculator/ | [OptionCalculator](https://github.com/mason276752/OptionCalculator) |
 | 學習與遊戲 | 五十音測驗 | https://mason276752.github.io/50in/ | [50in](https://github.com/mason276752/50in) |
 | 學習與遊戲 | 21 點 | https://mason276752.github.io/blackjack/ | [blackjack](https://github.com/mason276752/blackjack) |
 | 學習與遊戲 | 深刻地認識一個人 | https://mason276752.github.io/you-know-me/ | [you-know-me](https://github.com/mason276752/you-know-me) |
@@ -92,7 +93,7 @@ description: 一句話介紹       # 搜尋結果和分享連結顯示的摘要
 
 ## 放攝影作品
 
-作品集由相簿組成。每個相簿是 `src/content/albums/` 底下的一個資料夾，`index.md` 和照片放在一起；資料夾名稱就是網址：
+每個相簿是 `src/content/albums/` 底下的一個資料夾，`index.md` 和照片放在一起；資料夾名稱就是網址：
 
 ```
 src/content/albums/2026-kyoto/          → /photos/2026-kyoto/
@@ -104,7 +105,7 @@ src/content/albums/2026-kyoto/          → /photos/2026-kyoto/
 ```md
 ---
 title: 京都的秋天          # 必填，相簿名稱
-date: 2026-11-15          # 必填，作品集照這個排序，新的在前
+date: 2026-11-15          # 必填，相簿頁照這個排序，新的在前
 place: 京都               # 可省略
 description: 一句話摘要    # 可省略，相簿列表顯示的；省略就取文章開頭
 draft: false              # true 的話只在 npm run dev 看得到
@@ -130,7 +131,7 @@ photos:                   # 照片，照這個順序排，第一張是封面
 - **相簿頁** `/photos/<相簿>/`：標題、文章，下面是照片牆。點照片看大圖，可以用左右鍵或滑動切換；照片的說明顯示在大圖下方，長的只顯示開頭和「閱讀全文」。
 - **單張照片頁** `/photos/<相簿>/<檔名>/`：大圖、標題、完整的說明，以及上一張、下一張。看大圖時網址就是這一頁，可以直接分享。
 
-推到 `main` 後，作品集和首頁的「最新相簿」會自動列出來。建置時 Astro 會把每張照片轉成幾種尺寸的 WebP，原始檔不會放到網站上。
+推到 `main` 後，相簿頁和首頁的「最新相簿」會自動列出來。建置時 Astro 會把每張照片轉成幾種尺寸的 WebP，原始檔不會放到網站上。
 
 ### 方法一：npm run photo
 
@@ -150,7 +151,7 @@ HEIC／HEIF（iPhone、Sony 相機）在 macOS 上會自動轉檔；其他系統
 
 ### 方法二：線上上傳（/admin/）
 
-在 [/admin/](https://mason276752.github.io/admin/) 的「作品集」新增相簿，填名稱、日期、文章，在「照片」裡一張一張加：選照片、填標題和說明，可以拖曳排序。手機相簿裡的照片可以直接傳，HEIC 也可以：會先在瀏覽器裡縮到長邊 2560px、轉成 WebP 並移除 EXIF（包括 GPS），再 commit 到 `main`。
+在 [/admin/](https://mason276752.github.io/admin/) 的「相簿」新增相簿，填名稱、日期、文章，在「照片」裡一張一張加：選照片、填標題和說明，可以拖曳排序。手機相簿裡的照片可以直接傳，HEIC 也可以：會先在瀏覽器裡縮到長邊 2560px、轉成 WebP 並移除 EXIF（包括 GPS），再 commit 到 `main`。
 
 ### 直接放檔案
 
@@ -189,7 +190,7 @@ npm run dev                                # 邊寫邊看 http://localhost:4321/
 
 ### 方法二：線上編輯（/admin/）
 
-https://mason276752.github.io/admin/ 是 [Sveltia CMS](https://sveltiacms.app/) 後台：有表單、所見即所得編輯器、可以直接上傳圖片，手機也能用。按儲存會直接 commit 到 `main`，自動部署。作品集和首頁的自我介紹也在這裡改。
+https://mason276752.github.io/admin/ 是 [Sveltia CMS](https://sveltiacms.app/) 後台：有表單、所見即所得編輯器、可以直接上傳圖片，手機也能用。按儲存會直接 commit 到 `main`，自動部署。相簿和首頁的自我介紹也在這裡改。
 
 第一次使用要建一個 GitHub token：
 
@@ -219,7 +220,7 @@ tagline: 一句話說明
 url: https://mason276752.github.io/<repo>/
 repo: https://github.com/mason276752/<repo>
 icon: /icons/<repo>.svg
-category: files      # 放在哪一區：files 檔案處理、finance 美股與選擇權、learn 學習與遊戲、gallery 插圖搜尋
+category: files      # 放在哪一區：files 檔案處理、finance 股票與選擇權、learn 學習與遊戲、gallery 插圖搜尋
 order: 4             # 同一區裡越小越前面
 features:
   - 特色一
